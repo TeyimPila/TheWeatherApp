@@ -46,6 +46,11 @@ var model = {
 
 	},
 
+	/**
+	 * 
+	 * 
+	 * @param {object} location 
+	 */
 	fetchForcastWeatherData: function (location) {
 		var extension;
 
@@ -81,6 +86,12 @@ var views = {
 	processIcons: function () {
 
 	},
+	/**
+	 * views element that takes in weather data 
+	 * and uses it to populate the weather panel
+	 * 
+	 * @param {object} data 
+	 */
 	populateCurrentWeatherPanel: function (data) {
 		// console.log(data);
 
@@ -122,6 +133,11 @@ var views = {
 		skycons.play();
 
 	},
+	/**
+	 * method for populating the weather panels of all the forcast days.
+	 * 
+	 * @param {any} data 
+	 */
 	populateForecastWeatherPanel: function (data) {
 		var accordion = document.getElementById('accordion');
 
@@ -142,9 +158,7 @@ var views = {
 
 				card.appendChild(dailyCollapse);
 				accordion.appendChild(card);
-
-
-				console.log(dailyData);
+				// console.log(dailyData);
 			}
 		});
 

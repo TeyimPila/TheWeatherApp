@@ -12,6 +12,9 @@ body {
 }
 
 .panel-footer {
+    border-top: 0;
+    height: 30%;
+    background: #fff;
     margin: 0 auto;
     bottom: 0;
     width: 100%;
@@ -21,4 +24,8 @@ body {
 
 .l {
     border-right: solid black 2px;
+}
+
+i {
+    color: #cde7f5;
 }
