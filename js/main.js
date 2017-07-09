@@ -180,10 +180,10 @@ var views = {
 		var accordion = document.getElementById('accordion');
 		accordion.innerHTML = ''; // Clear all the children of the accordion before appending new ones
 
-		data.list.forEach(function (dailyData) {
-			if (data.list.indexOf(dailyData) !== 0) {
+		data.list.forEach(function (dailyData, position) {
+			if (position !== 0) {
 
-				var dayId = 'Day' + data.list.indexOf(dailyData);
+				var dayId = 'Day' + position;
 				var card = document.createElement('div');
 				card.className = 'card';
 				card.appendChild(views.createDayHeading(dailyData, dayId));
