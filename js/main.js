@@ -152,8 +152,8 @@ var views = {
 				footer.querySelector('#minTemp').innerHTML = '<i class="fa fa-arrow-down fa-2x" aria-hidden="true"></i> <span class="values-small temp-value">' + parseInt(data.main.temp_min) + ' &degF</span>';
 				footer.querySelector('#maxTemp').innerHTML = '<i class="fa fa-arrow-up fa-2x" aria-hidden="true"></i> <span class="values-small temp-value">' + parseInt(data.main.temp_max) + ' &degF</span>';
 			} else if (child.id == 'windPanel') {
-				child.querySelector('.panel-body').querySelector('#windDirection').innerHTML = '<span><strong>Wind Direction</strong><br><br></span><span class="values-medium">' + parseInt(data.wind.deg) + '&deg</span>';
-				child.querySelector('.panel-body').querySelector('#windSpeed').innerHTML = '<span><strong>Wind Speed</strong></span><br><br><span class="values-medium">' + data.wind.speed + '</span>';
+				child.querySelector('.panel-body').querySelector('#windDirection').innerHTML = '<span><strong>Direction</strong><br><br></span><span class="values-medium">' + parseInt(data.wind.deg) + '&deg</span>';
+				child.querySelector('.panel-body').querySelector('#windSpeed').innerHTML = '<span><strong>Speed</strong></span><br><br><span class="values-medium">' + data.wind.speed + '</span>';
 				child.querySelector('.panel-footer').innerHTML = '<span><i class="wi wi-wind towards-' + parseInt(data.wind.deg) + '-deg"></i><span><br>';
 			} else if (child.id == 'otherPanel') {
 				child.querySelector('.panel-body').querySelector('#humidity').innerHTML = '<span><strong>Humidity</strong><br><br><i class="wi wi-humidity"></i><br><br></span><span class="values-small">' + data.main.humidity + ' %</span>';
@@ -276,9 +276,9 @@ var views = {
                                     <div class="row panel-footer">#footer</div>\
                                 </div>')[0];
 
-		windPanel.querySelector('.panel-body').querySelector('#' + dayId + 'WindSpeed').innerHTML = '<span><strong>Wind Speed</strong><br><br></span><span class="values-medium">' + data.speed + ' mPH</span>';
-		windPanel.querySelector('.panel-body').querySelector('#' + dayId + 'WindDirection').innerHTML = '<span><strong>Wind Direction</strong></span><br><br><span class="values-medium">' + data.deg + '&deg</span>';
-		windPanel.querySelector('.panel-footer').innerHTML = '<span><i class="wi wi-wind towards-' + data.deg + '-deg"></i><span><br>';
+		windPanel.querySelector('.panel-body').querySelector('#' + dayId + 'WindSpeed').innerHTML = '<span><strong>Speed</strong><br><br></span><span class="values-medium">' + data.speed + '</span>';
+		windPanel.querySelector('.panel-body').querySelector('#' + dayId + 'WindDirection').innerHTML = '<span><strong>Direction</strong></span><br><br><span class="values-medium">' + data.deg + '&deg</span>';
+		windPanel.querySelector('.panel-footer').innerHTML = '<span><i class="wi wi-wind towards-' + data.deg + '-deg"></i><br><br><span><br><br><br>';
 
 		return windPanel;
 	},

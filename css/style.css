@@ -22,6 +22,25 @@ body {
     right: 0;
 }
 
+.panel{
+    width: 24%;
+    margin-left: 1%;
+}
+
+footer{
+    bottom: 0;
+    position: fixed;
+    width: 100%;
+    padding-top: 10px;
+    background: lightcyan;
+    color: black !important;
+    height: 40px;
+}
+
+footer .fa-coffee{
+    color: #593C1F;
+}
+
 .card-header{
     /*height: 30px;*/
     /*background: #f2f2f2;*/
@@ -39,11 +58,6 @@ body {
 i {
     color: #cde7f5;
 }
-
-
-
-
-
 
 .wi {
     font-size: 80px;
