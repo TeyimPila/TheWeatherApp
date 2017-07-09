@@ -1,5 +1,6 @@
 body {
     padding-top: 65px;
+    padding-bottom: 65px;
 }
 
 @media only screen and (max-width: 768px) {
