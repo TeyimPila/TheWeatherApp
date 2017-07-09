@@ -2,13 +2,23 @@ body {
     padding-top: 65px;
 }
 
-.panel {
-    /*padding: 0 5px 0 5px;*/
-    position: relative;
-    width: 292.5px;
-    height: 292.5px;
-    /*margin: 0 0 30px 0;*/
-    /*text-align: center*/
+@media only screen and (max-width: 768px) {
+    /* For mobile phones: */
+    .panel {
+        width: 100%;
+        height: 292.5px;
+        margin: 5px;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    /* For desktop: */
+    .panel {
+        position: relative;
+        width: 24%;
+        margin-left: 1%;
+        height: 292.5px;
+    }
 }
 
 .panel-footer {
@@ -22,12 +32,9 @@ body {
     right: 0;
 }
 
-.panel{
-    width: 24%;
-    margin-left: 1%;
-}
+.panel {}
 
-footer{
+footer {
     bottom: 0;
     position: fixed;
     width: 100%;
@@ -37,18 +44,17 @@ footer{
     height: 40px;
 }
 
-footer .fa-coffee{
+footer .fa-coffee {
     color: #593C1F;
 }
 
-.card-header{
+.card-header {
     /*height: 30px;*/
     /*background: #f2f2f2;*/
     /*border: 1px solid #cde7f5;*/
     font-size: 20px;
     border-radius: 5px;
     /*margin-top: 90px;*/
-
 }
 
 .acc-row {
@@ -63,7 +69,7 @@ i {
     font-size: 80px;
 }
 
-.values-small{
+.values-small {
     font-size: 20px;
 }
 
