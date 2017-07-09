@@ -3,9 +3,30 @@
  */
 
 $('document').ready(function () {
+
+	// Get weather information when my Location is clicked
+	$('#myLocation').click(function () {
+		var errorAlert = $('#errorAlert');
+		errorAlert.addClass('hidden');
+		model.getLocation();
+	});
+
+	$(':checkbox').change(function () {
+		// this will contain a reference to the checkbox   
+		if (this.checked) {
+			views.changeTempValues('C');
+			// console.log('Converting from C to F');
+		} else {
+			views.changeTempValues('F');
+			// console.log('Converting from F to C');
+		}
+	});
+
+	handlers.searchCity();
 	model.getLocation();
 });
 
+var errorAlert = $('#errorAlert');
 var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var list = ["clear-day", "clear-night", "partly-cloudy-day", "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind", "fog"];
 
@@ -32,18 +53,17 @@ var model = {
 			extension = 'lat=' + location.coords.latitude + '&lon=' + location.coords.longitude;
 		}
 
-		current_url = current_url + extension + '&appid=5ec090e12404bc4a962dc2176af41883';
+		current_url = current_url + extension + '&appid=5ec090e12404bc4a962dc2176af41883&units=imperial';
 
 		$.ajax({
 			type: 'GET',
 			url: current_url,
 			success: views.populateCurrentWeatherPanel,
-			error: function (xhr, status, error) {},
+			error: function (xhr, status, error) {
+				handlers.ajaxErrorHandler(xhr, status, error)
+			},
 			cache: false
 		});
-
-		// console.log(current_url);
-
 	},
 
 	/**
@@ -62,14 +82,14 @@ var model = {
 			extension = 'lat=' + location.coords.latitude + '&lon=' + location.coords.longitude;
 		}
 
-		forcast_url = forcast_url + extension + '&appid=5ec090e12404bc4a962dc2176af41883';
+		forcast_url = forcast_url + extension + '&appid=5ec090e12404bc4a962dc2176af41883&units=imperial';
 
 		$.ajax({
 			type: 'GET',
 			url: forcast_url,
 			success: views.populateForecastWeatherPanel,
 			error: function (xhr, status, error) {
-				console.log(error);
+				// handlers.ajaxErrorHandler(xhr, status, error)
 			},
 			cache: false
 		});
@@ -83,8 +103,31 @@ var model = {
 
 var views = {
 
-	processIcons: function () {
+	changeTempValues: function (from) {
+		var tempValues = $('.temp-value');
+		var tempValue;
+		if (from === 'F') {
+			Object.values(tempValues).forEach(function (temp) {
+				if (temp.innerText !== undefined) {
+					tempValue = parseFloat(temp.innerText.split(' ')[0])
+					temp.innerHTML = utils.convertTemp(tempValue, from) + ' &degC';
+				}
+			});
+		} else {
+			Object.values(tempValues).forEach(function (temp) {
+				if (temp.innerText !== undefined) {
+					tempValue = parseFloat(temp.innerText.split(' ')[0])
+					temp.innerHTML = utils.convertTemp(tempValue, from) + ' &degF';
+				}
+			});
+		}
+	},
 
+	displayError: function (errorMessage) {
+		errorAlert.html(' <strong>Oh snap!</strong> ' + errorMessage);
+		errorAlert.removeClass('hidden');
+
+		// errorAlert.parentElement.
 	},
 	/**
 	 * views element that takes in weather data 
@@ -105,22 +148,22 @@ var views = {
 				child.innerHTML = '<h1 id="cityAndDate">Current Weather Condition in ' + data.name + '</h1>';
 			} else if (child.id == 'weatherPanel') {
 				child.querySelector('.panel-body').innerHTML = iconCanvas;
-				child.querySelector('.panel-footer').innerHTML = "<span>" + utils.toTitleCase(data.weather[0].description) + '</span>';
+				child.querySelector('.panel-footer').innerHTML = "<span><strong>" + utils.toTitleCase(data.weather[0].description) + '</strong></span>';
 			} else if (child.id == 'tempPanel') {
-				child.querySelector('.panel-body').innerHTML = '<span id="temperatureValue" class="values-large temp-value">' + data.main.temp + ' &degF</span>';
+				child.querySelector('.panel-body').innerHTML = '<span class="values-large temp-value">' + parseInt(data.main.temp) + ' &degF</span>';
 				var footer = child.querySelector('.panel-footer');
 
-				footer.querySelector('#minTemp').innerHTML = '<span><img src="https://png.icons8.com/minimum-value/ios7/25" title="Minimum Value" width="20" height="20"></span> <span class="values-small temp-value">' + data.main.temp_min + ' &degF</span>';
-				footer.querySelector('#maxTemp').innerHTML = '<span><img src="https://png.icons8.com/maximum-value/ios7/25" title="Maximum Value" width="20" height="20"></span> <span class="values-small temp-value">' + data.main.temp_max + ' &degF</span>';
+				footer.querySelector('#minTemp').innerHTML = '<i class="fa fa-arrow-down fa-2x" aria-hidden="true"></i> <span class="values-small temp-value">' + parseInt(data.main.temp_min) + ' &degF</span>';
+				footer.querySelector('#maxTemp').innerHTML = '<i class="fa fa-arrow-up fa-2x" aria-hidden="true"></i> <span class="values-small temp-value">' + parseInt(data.main.temp_max) + ' &degF</span>';
 			} else if (child.id == 'windPanel') {
-				child.querySelector('.panel-body').querySelector('#windDirection').innerHTML = '<span>Wind Direction<br>' + data.wind.deg + '&deg</span>';
-				child.querySelector('.panel-body').querySelector('#windSpeed').innerHTML = '<span>Wind Speed</span><br><span>' + data.wind.speed + '</span>';
-				child.querySelector('.panel-footer').innerHTML = '<span><i class="wi wi-wind towards-' + data.wind.deg + '-deg"></i><span>';
+				child.querySelector('.panel-body').querySelector('#windDirection').innerHTML = '<span><strong>Wind Direction</strong><br><br></span><span class="values-medium">' + parseInt(data.wind.deg) + '&deg</span>';
+				child.querySelector('.panel-body').querySelector('#windSpeed').innerHTML = '<span><strong>Wind Speed</strong></span><br><br><span class="values-medium">' + data.wind.speed + '</span>';
+				child.querySelector('.panel-footer').innerHTML = '<span><i class="wi wi-wind towards-' + parseInt(data.wind.deg) + '-deg"></i><span><br>';
 				// console.log(child);
 			} else if (child.id == 'otherPanel') {
-				child.querySelector('.panel-body').querySelector('#humidity').innerHTML = '<span>Humidity<br><i class="wi wi-humidity"></i><br>' + data.main.humidity + '</span>';
-				child.querySelector('.panel-body').querySelector('#pressure').innerHTML = '<span>Pressure<br><i class="wi wi-barometer"></i><br>' + data.main.pressure + '</span>';
-				child.querySelector('.panel-footer').innerHTML = '<div class="col-xs-6"><span>H</span></div><div class="col-xs-6"><span>P</span></div>';
+				child.querySelector('.panel-body').querySelector('#humidity').innerHTML = '<span><strong>Humidity</strong><br><br><i class="wi wi-humidity"></i><br><br></span><span class="values-small">' + data.main.humidity + ' %</span>';
+				child.querySelector('.panel-body').querySelector('#pressure').innerHTML = '<span><strong>Pressure</strong><br><br><i class="wi wi-barometer"></i><br><br></span><span class="values-small">' + data.main.pressure + ' hPa</span>';
+				// child.querySelector('.panel-footer').innerHTML = '<div class="col-xs-6"><span>H</span></div><div class="col-xs-6"><span>P</span></div>';
 
 			}
 		});
@@ -140,13 +183,15 @@ var views = {
 	 */
 	populateForecastWeatherPanel: function (data) {
 		var accordion = document.getElementById('accordion');
+		accordion.innerHTML = ''; // Clear all the children of the accordion before appending new ones
 
 		data.list.forEach(function (dailyData) {
 			if (data.list.indexOf(dailyData) !== 0) {
 
 				var dayId = 'Day' + data.list.indexOf(dailyData);
 				var card = document.createElement('div');
-				card.className = 'card';
+				card.className = 'card acc-row';
+				// card.addClass = 'acc-row';
 				card.appendChild(views.createDayHeading(dailyData, dayId));
 
 				var dailyCollapse = $.parseHTML('<div id="collapse' + dayId + '" class="collapse" role="tabpanel" aria-labelledby="heading' + dayId + '"></div>')[0];
@@ -158,6 +203,7 @@ var views = {
 
 				card.appendChild(dailyCollapse);
 				accordion.appendChild(card);
+
 				// console.log(dailyData);
 			}
 		});
@@ -183,11 +229,9 @@ var views = {
 		}
 
 		var heading = '<div class="card-header" role="tab" id="heading' + dayId + '">\
-			<h5 class="mb-0">\
-				<a data-toggle="collapse" data-parent="#accordion" href="#collapse' + dayId + '" aria-expanded="false" aria-controls="collapse' + dayId + '">\
+				<div data-toggle="collapse" data-parent="#accordion" href="#collapse' + dayId + '" aria-expanded="false" aria-controls="collapse' + dayId + '">\
 						' + day + '\
-				</a>\
-			</h5>\
+				</div>\
 		</div>';
 
 		return $.parseHTML(heading)[0];
@@ -201,7 +245,7 @@ var views = {
 		// console.log(weartherPanel);
 
 		weartherPanel.querySelector('.panel-body').innerHTML = iconCanvas;
-		weartherPanel.querySelector('.panel-footer').innerHTML = "<span>" + utils.toTitleCase(data.weather[0].description) + '</span>';
+		weartherPanel.querySelector('.panel-footer').innerHTML = "<span><strong>" + utils.toTitleCase(data.weather[0].description) + '</strong></span>';
 		return weartherPanel;
 	},
 
@@ -219,11 +263,11 @@ var views = {
                                     </div>\
                                 </div>')[0];
 
-		tempPanel.querySelector('.panel-body').innerHTML = '<span>Daily Average</span><br><span id="temperatureValue" class="values-large temp-value">' + utils.getAverageTemp(data.temp.day, data.temp.morn, data.temp.eve, data.temp.night) + ' &degF</span>';
+		tempPanel.querySelector('.panel-body').innerHTML = '<span><strong>Daily Average</strong></span><br><span class="values-large temp-value">' + utils.getAverageTemp(data.temp.day, data.temp.morn, data.temp.eve, data.temp.night) + ' &degF</span>';
 		var footer = tempPanel.querySelector('.panel-footer');
 
-		footer.querySelector('#' + dayId + 'minTemp').innerHTML = '<span><img src="https://png.icons8.com/minimum-value/ios7/25" title="Minimum Value" width="20" height="20"></span> <span class="values-small temp-value">' + data.temp.min + ' &degF</span>';
-		footer.querySelector('#' + dayId + 'maxTemp').innerHTML = '<span><img src="https://png.icons8.com/maximum-value/ios7/25" title="Maximum Value" width="20" height="20"></span> <span class="values-small temp-value">' + data.temp.max + ' &degF</span>';
+		footer.querySelector('#' + dayId + 'minTemp').innerHTML = '<i class="fa fa-arrow-down fa-2x" aria-hidden="true"></i> <span class="values-small temp-value">' + parseInt(data.temp.min) + ' &degF</span>';
+		footer.querySelector('#' + dayId + 'maxTemp').innerHTML = '<i class="fa fa-arrow-up fa-2x" aria-hidden="true"></i> <span class="values-small temp-value">' + parseInt(data.temp.max) + ' &degF</span>';
 
 		return tempPanel;
 	},
@@ -240,9 +284,9 @@ var views = {
                                     <div class="row panel-footer">#footer</div>\
                                 </div>')[0];
 
-		windPanel.querySelector('.panel-body').querySelector('#' + dayId + 'WindSpeed').innerHTML = '<span>Wind Speed<br>' + data.speed + '&deg</span>';
-		windPanel.querySelector('.panel-body').querySelector('#' + dayId + 'WindDirection').innerHTML = '<span>Wind Direction</span><br><span>' + data.deg + '</span>';
-		windPanel.querySelector('.panel-footer').innerHTML = '<span><i class="wi wi-wind towards-' + data.deg + '-deg"></i><span>';
+		windPanel.querySelector('.panel-body').querySelector('#' + dayId + 'WindSpeed').innerHTML = '<span><strong>Wind Speed</strong><br><br></span><span class="values-medium">' + data.speed + ' mPH</span>';
+		windPanel.querySelector('.panel-body').querySelector('#' + dayId + 'WindDirection').innerHTML = '<span><strong>Wind Direction</strong></span><br><br><span class="values-medium">' + data.deg + '&deg</span>';
+		windPanel.querySelector('.panel-footer').innerHTML = '<span><i class="wi wi-wind towards-' + data.deg + '-deg"></i><span><br>';
 
 		return windPanel;
 	},
@@ -255,13 +299,12 @@ var views = {
                                         <div id="' + dayId + 'Humidity" class="l col-xs-6"></div>\
                                         <div id="' + dayId + 'Pressure" class="r col-xs-6"></div>\
                                     </div>\
-                                    <div class="row panel-footer">#footer</div>\
                                 </div>')[0];
 
 
-		otherPanel.querySelector('.panel-body').querySelector('#' + dayId + 'Humidity').innerHTML = '<span>Humidity<br><i class="wi wi-humidity"></i><br>' + data.humidity + '</span>';
-		otherPanel.querySelector('.panel-body').querySelector('#' + dayId + 'Pressure').innerHTML = '<span>Pressure<br><i class="wi wi-barometer"></i><br>' + data.pressure + '</span>';
-		otherPanel.querySelector('.panel-footer').innerHTML = '<div class="l col-xs-6"><span>H</span></div><div class="r col-xs-6"><span>P</span></div>';
+		otherPanel.querySelector('.panel-body').querySelector('#' + dayId + 'Humidity').innerHTML = '<span><strong>Humidity</strong><br><br><i class="wi wi-humidity"></i><br><br></span><span class="values-small">' + data.humidity + '%</span>';
+		otherPanel.querySelector('.panel-body').querySelector('#' + dayId + 'Pressure').innerHTML = '<span><strong>Pressure</strong><br><br><i class="wi wi-barometer"></i><br><br></span><span class="values-small">' + data.pressure + 'hPa</span>';
+		// otherPanel.querySelector('.panel-footer').innerHTML = '<div class="l col-xs-6"><span>H</span></div><div class="r col-xs-6"><span>P</span></div>';
 
 		return otherPanel;
 	}
@@ -269,17 +312,67 @@ var views = {
 
 }
 
+var handlers = {
+	searchCity: function () {
+		var searchField = document.getElementById('search');
+
+		searchField.onkeydown = function (event) {
+			if (event.keyCode === 13) {
+				var searchTerm = searchField.value.trim();
+
+				if (searchTerm.length < 1) {
+					views.displayError(' Come on... You can\'t search for \'void\', now can you?');
+				} else {
+					errorAlert.addClass('hidden');
+
+					model.getLocation(searchTerm)
+					searchField.value = '';
+				}
+			}
+		};
+
+	},
+
+	ajaxErrorHandler: function (xhr, status, error) {
+		var msg;
+		if (xhr.status === 0) {
+			msg = 'Internet connectivity is what makes all of these possible. You don\'t seem to have one';
+		} else if (xhr.status == 404) {
+			msg = 'Lol... Such a place doesn\'t seem to be existing yet';
+		} else if (xhr.status == 500) {
+			msg = 'Oh mehn, something seems to have gone wrong on our end';
+		} else if (exception === 'parsererror') {
+			msg = 'I couldn\'t make sense of the data these people sent me. Signed: browser.';
+		} else if (exception === 'timeout') {
+			msg = 'I opened my doors for the server but he took too long to respond. Time is out!';
+		} else if (exception === 'abort') {
+			msg = 'Damn, I was doing some work here!';
+		} else {
+			msg = 'I don\'t know what happened but Something went wrong: ' + xhr.responseJSON.message;
+		}
+		views.displayError(msg);
+	}
+}
+
 var utils = {
+	convertTemp: function(value, from) {
+		if (from === 'F') {
+			return parseInt((parseFloat(value) - 32) * (5 / 9));
+		} else {
+			return parseInt((parseFloat(value) * (9 / 5)) + 32);
+		}
+	},
 	getDate: function (utcDate) {
 		return new Date(utcDate * 1000);
 	},
+
 	getAverageTemp: function () {
 
 		var arguments = Object.values(arguments);
 		var sum = arguments.reduce(function (acc, b) {
 			return acc += b;
 		});
-		return (sum / arguments.length).toFixed(2);
+		return parseInt(sum / arguments.length);
 	},
 
 	toTitleCase: function (str) {
