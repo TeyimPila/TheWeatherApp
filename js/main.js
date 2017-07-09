@@ -15,10 +15,8 @@ $('document').ready(function () {
 		// this will contain a reference to the checkbox   
 		if (this.checked) {
 			views.changeTempValues('C');
-			// console.log('Converting from C to F');
 		} else {
 			views.changeTempValues('F');
-			// console.log('Converting from F to C');
 		}
 	});
 
@@ -93,7 +91,6 @@ var model = {
 			},
 			cache: false
 		});
-		// console.log(forcast_url);
 	},
 
 	fetchSearchWeatherData: function (city) {
@@ -136,7 +133,6 @@ var views = {
 	 * @param {object} data 
 	 */
 	populateCurrentWeatherPanel: function (data) {
-		// console.log(data);
 
 		var decorations = utils.getBackgroundAndWeatherIcon(data.weather[0].icon);
 		var iconCanvas = '<canvas id="currently-' + decorations.weatherCondition + '" width="128" height="128"></canvas>';
@@ -159,7 +155,6 @@ var views = {
 				child.querySelector('.panel-body').querySelector('#windDirection').innerHTML = '<span><strong>Wind Direction</strong><br><br></span><span class="values-medium">' + parseInt(data.wind.deg) + '&deg</span>';
 				child.querySelector('.panel-body').querySelector('#windSpeed').innerHTML = '<span><strong>Wind Speed</strong></span><br><br><span class="values-medium">' + data.wind.speed + '</span>';
 				child.querySelector('.panel-footer').innerHTML = '<span><i class="wi wi-wind towards-' + parseInt(data.wind.deg) + '-deg"></i><span><br>';
-				// console.log(child);
 			} else if (child.id == 'otherPanel') {
 				child.querySelector('.panel-body').querySelector('#humidity').innerHTML = '<span><strong>Humidity</strong><br><br><i class="wi wi-humidity"></i><br><br></span><span class="values-small">' + data.main.humidity + ' %</span>';
 				child.querySelector('.panel-body').querySelector('#pressure').innerHTML = '<span><strong>Pressure</strong><br><br><i class="wi wi-barometer"></i><br><br></span><span class="values-small">' + data.main.pressure + ' hPa</span>';
@@ -190,8 +185,7 @@ var views = {
 
 				var dayId = 'Day' + data.list.indexOf(dailyData);
 				var card = document.createElement('div');
-				card.className = 'card acc-row';
-				// card.addClass = 'acc-row';
+				card.className = 'card';
 				card.appendChild(views.createDayHeading(dailyData, dayId));
 
 				var dailyCollapse = $.parseHTML('<div id="collapse' + dayId + '" class="collapse" role="tabpanel" aria-labelledby="heading' + dayId + '"></div>')[0];
@@ -204,7 +198,6 @@ var views = {
 				card.appendChild(dailyCollapse);
 				accordion.appendChild(card);
 
-				// console.log(dailyData);
 			}
 		});
 
@@ -242,7 +235,6 @@ var views = {
 		var decorations = utils.getBackgroundAndWeatherIcon(data.weather[0].icon);
 		var iconCanvas = '<canvas  width="128" height="128" class="' + decorations.weatherCondition + '"></canvas>';
 		var weartherPanel = $.parseHTML('<div class="panel panel-info col-xs-12 col-sm-3"><div class="row panel-heading"><h4>The Weather</h4></div><div class="panel-body"></div><div class="row panel-footer">#footer</div></div>')[0];
-		// console.log(weartherPanel);
 
 		weartherPanel.querySelector('.panel-body').innerHTML = iconCanvas;
 		weartherPanel.querySelector('.panel-footer').innerHTML = "<span><strong>" + utils.toTitleCase(data.weather[0].description) + '</strong></span>';
@@ -381,7 +373,6 @@ var utils = {
 		});
 	},
 	getBackgroundAndWeatherIcon: function (iconCode) {
-		// console.log(iconCode);
 		var canvas,
 			weatherCondition,
 			backgroundImage;
