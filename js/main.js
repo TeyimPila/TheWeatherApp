@@ -328,11 +328,11 @@ var handlers = {
 	ajaxErrorHandler: function (xhr, status, error) {
 		var msg;
 		if (xhr.status === 0) {
-			msg = 'Internet connectivity is what makes all of these possible. You don\'t seem to have one';
+			msg = 'Internet connectivity is what makes all of this possible. You don\'t seem to have one';
 		} else if (xhr.status == 404) {
-			msg = 'Lol... Such a place doesn\'t seem to be existing yet';
+			msg = 'Lol... Such a place doesn\'t seem to exist yet.';
 		} else if (xhr.status == 500) {
-			msg = 'Oh mehn, something seems to have gone wrong on our end';
+			msg = 'Oh mehn, something seems to have gone wrong on our end.';
 		} else if (exception === 'parsererror') {
 			msg = 'I couldn\'t make sense of the data these people sent me. Signed: browser.';
 		} else if (exception === 'timeout') {
