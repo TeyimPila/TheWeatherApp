@@ -43,7 +43,7 @@ var model = {
 	fetchCurrentWeatherData: function (location) {
 		var extension;
 
-		var current_url = 'http://api.openweathermap.org/data/2.5/weather?';
+		var current_url = 'https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/weather?';
 
 		if (arguments[1] !== undefined) {
 			extension = 'q=' + arguments[1];
@@ -72,7 +72,7 @@ var model = {
 	fetchForcastWeatherData: function (location) {
 		var extension;
 
-		var forcast_url = 'http://api.openweathermap.org/data/2.5/forecast/daily?';
+		var forcast_url = 'https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/forecast/daily?';
 
 		if (arguments[1] !== undefined) {
 			extension = 'q=' + arguments[1];
